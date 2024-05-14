@@ -1,0 +1,114 @@
+using System;
+
+class Node
+{
+    public int key;
+    public Node left, right;
+
+    public Node(int item)
+    {
+        key = item;
+        left = right = null;
+    }
+}
+
+class BinarySearchTree
+{
+    Node root;
+
+    public BinarySearchTree()
+    {
+        root = null;
+    }
+
+    void Insert(int key)
+    {
+        root = InsertRec(root, key);
+    }
+
+    Node InsertRec(Node root, int key)
+    {
+        if (root == null)
+        {
+            root = new Node(key);
+            return root;
+        }
+
+        if (key < root.key)
+            root.left = InsertRec(root.left, key);
+        else if (key > root.key)
+            root.right = InsertRec(root.right, key);
+
+        return root;
+    }
+
+    void InOrder()
+    {
+        InOrderRec(root);
+    }
+
+    void InOrderRec(Node root)
+    {
+        if (root != null)
+        {
+            InOrderRec(root.left);
+            Console.Write(root.key + " ");
+            InOrderRec(root.right);
+        }
+    }
+
+    public Node DeleteNode(Node root, int key)
+    {
+        if (root == null)
+            return root;
+
+        if (key < root.key)
+            root.left = DeleteNode(root.left, key);
+        else if (key > root.key)
+            root.right = DeleteNode(root.right, key);
+        else
+        {
+            if (root.left == null)
+                return root.right;
+            else if (root.right == null)
+                return root.left;
+
+            root.key = MinValue(root.right);
+
+            root.right = DeleteNode(root.right, root.key);
+        }
+        return root;
+    }
+
+    int MinValue(Node root)
+    {
+        int minv = root.key;
+        while (root.left != null)
+        {
+            minv = root.left.key;
+            root = root.left;
+        }
+        return minv;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        BinarySearchTree bst = new BinarySearchTree();
+
+        int[] keys = { 50, 30, 20, 40, 70, 60, 80 };
+
+        foreach (int key in keys)
+            bst.Insert(key);
+
+        Console.WriteLine("Binary Search Tree in InOrder:");
+        bst.InOrder();
+
+        int keyToRemove = 20;
+        bst.root = bst.DeleteNode(bst.root, keyToRemove);
+        Console.WriteLine($"\nBinary Search Tree after removing node with key {keyToRemove} in InOrder:");
+        bst.InOrder();
+    }
+}
